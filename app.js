@@ -385,6 +385,55 @@ function escribir(ctx, texto, x, y, ancho, alto) {
   return y;
 }
 
+/* Generador pseudoaleatorio con semilla (mulberry32), para que cada edad tenga su propio ascenso. */
+function azar(semilla) {
+  let a = semilla >>> 0;
+  return () => {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/* El ascenso: una luz sale del punto de la persona en la curva y sube por encima del pico. */
+function dibujarAscenso(ctx, x0, y0, yFin, semilla) {
+  const r = azar(semilla);
+  const x1 = x0 + 60 + r() * 60, y1 = yFin;
+  const cx = x0 - 40 + r() * 30, cy = (y0 + y1) / 2;
+  const punto = (t) => [
+    (1 - t) * (1 - t) * x0 + 2 * (1 - t) * t * cx + t * t * x1,
+    (1 - t) * (1 - t) * y0 + 2 * (1 - t) * t * cy + t * t * y1,
+  ];
+  // Despegue: un anillo tenue donde empieza.
+  ctx.strokeStyle = "rgba(230,159,0,0.45)"; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.arc(x0, y0, 26, 0, Math.PI * 2); ctx.stroke();
+  // Estela: partículas que crecen y se encienden conforme sube.
+  for (let k = 0; k < 900; k++) {
+    const t = k / 900;
+    const [x, y] = punto(t);
+    const abre = 4 + 22 * (1 - t);
+    const tam = 1.5 + 6 * t * t;
+    ctx.fillStyle = `rgba(230,159,0,${(0.12 + 0.75 * t).toFixed(3)})`;
+    ctx.beginPath();
+    ctx.arc(x + (r() - 0.5) * abre, y + (r() - 0.5) * abre * 0.5, tam * (0.5 + r() * 0.6), 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // Halo y chispas alrededor de la cabeza.
+  const halo = ctx.createRadialGradient(x1, y1, 0, x1, y1, 130);
+  halo.addColorStop(0, "rgba(255,201,77,0.75)");
+  halo.addColorStop(0.35, "rgba(230,159,0,0.30)");
+  halo.addColorStop(1, "rgba(230,159,0,0)");
+  ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(x1, y1, 130, 0, Math.PI * 2); ctx.fill();
+  for (let k = 0; k < 60; k++) {
+    const ang = r() * Math.PI * 2, dist = 30 + r() * 90;
+    ctx.fillStyle = `rgba(230,159,0,${(0.25 + r() * 0.6).toFixed(2)})`;
+    ctx.beginPath(); ctx.arc(x1 + Math.cos(ang) * dist, y1 + Math.sin(ang) * dist, 1.5 + r() * 3.5, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.fillStyle = "#FFD76E"; ctx.beginPath(); ctx.arc(x1, y1, 17, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#FFF4D6"; ctx.beginPath(); ctx.arc(x1, y1, 8, 0, Math.PI * 2); ctx.fill();
+}
+
 let ultimaTarjeta = null;  // { blob, texto }
 
 function crearTarjeta(ev) {
@@ -401,16 +450,14 @@ function crearTarjeta(ev) {
   const artH = historia ? 920 : 560;
   aviso.textContent = "Dibujando tu tarjeta…";
   const serie = serieActual();
-  const resaltar = edad >= 18 ? Math.min(edad, 90) : 18;  // a los 17, su columna es la del primer voto
   const holder = document.createElement("div");
   holder.style.cssText = "position:absolute;left:-99999px;top:0";
   document.body.appendChild(holder);
 
   document.fonts.ready.then(() => sedimento({
-    contenedor: holder, ancho: W, alto: artH, semilla: 1000 + edad, resaltar, animar: false,
-    densidad: 1, serie, total: historia ? 26000 : 20000, tam: 3.4,
-    quedaSiempre: true, sinPerdidas: true, sinGuia: true,
-    alTerminar: (arte) => {
+    contenedor: holder, ancho: W, alto: artH, semilla: 1000 + edad, animar: false,
+    densidad: 1, serie, total: historia ? 26000 : 20000, tam: 3.4, sinPerdidas: true,
+    alTerminar: (arte, geo) => {
       const cv = document.getElementById("vista-tarjeta");
       cv.width = W; cv.height = H;
       const ctx = cv.getContext("2d");
@@ -428,13 +475,14 @@ function crearTarjeta(ev) {
       ctx.font = `700 ${historia ? 82 : 66}px "Bricolage Grotesque"`;
       ctx.fillText("el 6 de junio de 2027", X, y);
 
-      // El sedimento con la columna propia en ámbar.
-      y += historia ? 50 : 30;
+      // La curva real y, desde la edad de la persona, el ascenso por encima del pico.
+      y += historia ? 60 : 50;
       ctx.drawImage(arte, 0, y);
-      y += artH + (historia ? 30 : 10);
-      ctx.fillStyle = C.suave;
-      ctx.font = '400 30px "Atkinson Hyperlegible"';
-      ctx.fillText(edad >= 18 ? "Mi columna, en ámbar: yo sí llego." : "Mi columna, en ámbar: la del primer voto.", X, y);
+      const desde = Math.max(edad, 18);
+      // Termina por encima del pico de la curva (65 años): más alto que nadie.
+      const pico = DATOS.edades[d3.maxIndex(serie)];
+      dibujarAscenso(ctx, geo.x(desde), y + geo.y(desde), y + geo.y(pico) - (historia ? 110 : 70), 7000 + edad);
+      y += artH - (historia ? 40 : 30);
 
       // Orgullo personal y con quién.
       y += historia ? 110 : 80;
