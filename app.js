@@ -555,12 +555,29 @@ async function copiarTexto() {
   }
 }
 
+/* Aparta la altura de las gráficas que se dibujan al entrar en pantalla, para que la página no brinque. */
+function reservarAlturas() {
+  const curva = (sel) => Math.round(Math.max(280, Math.min(380, anchoDe(sel) * 0.62)));
+  const puntos = () => {
+    const A = anchoDe("#g-puntos"), cols = A < 500 ? 12 : 20, n = Math.round(DATOS.bloques.no_votaron_jovenes / 1e5);
+    return Math.ceil(n / cols) * (A / cols) + 4;
+  };
+  const altos = { "#g-curva": curva("#g-curva"), "#g-puntos": puntos(), "#g-casilla": 120, "#g-vida": 190,
+                  "#g-razones": 9 * 42 + 40, "#g-bloques": 320 };
+  Object.entries(altos).forEach(([sel, h]) => {
+    const el = document.querySelector(sel);
+    // El SVG usa viewBox con el ancho real, así que la altura en pantalla es proporcional.
+    el.style.minHeight = `${Math.round(h * el.clientWidth / anchoDe(sel))}px`;
+  });
+}
+
 /* ---------- arranque ---------- */
 
 function iniciar() {
   const heroe = document.getElementById("sedimento");
   sedimento({ contenedor: heroe, ancho: heroe.clientWidth, alto: heroe.clientHeight, semilla: 2024, animar: !REDUCIR });
 
+  reservarAlturas();
   iniciarApuesta();
   iniciarEdad();
   alVer("#g-curva", () => registrar("#g-curva", () => graficaCurva("#g-curva", P24, { animar: true })));
