@@ -1,0 +1,178 @@
+:root {
+  --papel: #F3EFF7;
+  --tinta: #2B1736;
+  --morado: #6B2C91;
+  --lila: #B48CD6;
+  --ambar: #E69F00;
+  --verde: #1B9E77;
+  --niebla: #9B8FA6;
+  --tinta-suave: #5E4E6B;
+  --display: "Bricolage Grotesque", "Arial Narrow", sans-serif;
+  --texto: "Atkinson Hyperlegible", Verdana, sans-serif;
+  --medida: 38em;
+  --gutter: 16px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--texto);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+}
+
+a { color: var(--morado); text-underline-offset: 0.18em; }
+a:hover { color: var(--tinta); }
+
+:focus-visible { outline: 3px solid var(--ambar); outline-offset: 3px; }
+
+.saltar {
+  position: absolute; left: var(--gutter); top: -40px;
+  background: var(--tinta); color: var(--papel); padding: 6px 10px; z-index: 10;
+}
+.saltar:focus { top: 8px; }
+
+/* Héroe */
+.heroe { position: relative; overflow: hidden; }
+.heroe-arte { width: 100%; height: min(62vh, 520px); }
+.heroe-arte canvas { display: block; }
+.heroe-texto {
+  max-width: 1100px; margin: 0 auto; padding: 0 var(--gutter) 2.5rem;
+}
+.titulo {
+  font-family: var(--display);
+  font-variation-settings: "wdth" 78, "opsz" 96;
+  font-weight: 800;
+  font-size: clamp(4.5rem, 19vw, 11rem);
+  line-height: 0.85;
+  letter-spacing: -0.02em;
+  margin: 0.25em 0 0.2em;
+  color: var(--tinta);
+}
+.hundida {
+  display: inline-block;
+  transform: translateY(0.28em);
+  color: var(--morado);
+}
+.bajada {
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 5vw, 2.4rem);
+  font-weight: 500;
+  line-height: 1.15;
+  margin: 0.6em 0 0.4em;
+}
+.nota-arte { color: var(--tinta-suave); font-size: 0.9rem; max-width: 34em; margin: 0; }
+
+/* Secciones */
+main { max-width: 1100px; margin: 0 auto; padding: 0 var(--gutter); }
+.seccion { padding: 4.5rem 0 1rem; }
+.seccion > p, .seccion > h2, .seccion > details, .seccion > form, .seccion > ol { max-width: var(--medida); }
+
+h2 {
+  font-family: var(--display);
+  font-variation-settings: "wdth" 88, "opsz" 48;
+  font-weight: 700;
+  font-size: clamp(1.75rem, 5.5vw, 2.45rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.6em;
+}
+
+figure { margin: 1.5rem 0 0; }
+figcaption { color: var(--tinta-suave); font-size: 0.85rem; margin-top: 0.5rem; max-width: 46em; }
+
+.grafica { width: 100%; max-width: 760px; }
+.grafica svg, .multiples svg { display: block; width: 100%; height: auto; overflow: visible; }
+.grafica text, .multiples text { font-family: var(--texto); fill: var(--tinta); }
+
+/* Apuesta */
+.apuesta { display: flex; gap: 12px; flex-wrap: wrap; margin: 1.5rem 0; }
+button, .boton-sec {
+  font: 700 1.05rem/1 var(--texto);
+  border-radius: 999px;
+  padding: 0.9em 1.4em;
+  cursor: pointer;
+  border: 2px solid var(--tinta);
+  background: var(--tinta);
+  color: var(--papel);
+  text-decoration: none;
+  display: inline-block;
+}
+.boton-apuesta { background: transparent; color: var(--tinta); min-width: 9.5em; }
+.boton-apuesta[aria-pressed="true"] { background: var(--tinta); color: var(--papel); }
+.boton-sec { background: transparent; color: var(--tinta); }
+button:hover, .boton-sec:hover { border-color: var(--morado); }
+.reaccion {
+  font-family: var(--display); font-size: clamp(1.3rem, 4vw, 1.75rem); font-weight: 600; line-height: 1.2;
+  max-width: var(--medida);
+}
+
+/* Tu edad */
+.form-edad {
+  display: grid; grid-template-columns: auto 1fr; gap: 10px 14px; align-items: center; margin: 1.25rem 0;
+}
+.form-edad label { font-weight: 700; }
+.opcional { font-weight: 400; color: var(--tinta-suave); }
+.form-edad input, .form-edad select {
+  font: 1.05rem var(--texto); color: var(--tinta);
+  padding: 0.6em 0.7em; border: 2px solid var(--tinta); border-radius: 10px; background: #fff; max-width: 16em; width: 100%;
+}
+.form-edad button { grid-column: 1 / -1; justify-self: start; }
+.resultado {
+  font-family: var(--display); font-size: clamp(1.25rem, 4vw, 1.6rem); font-weight: 600; line-height: 1.25;
+  min-height: 1.3em;
+}
+.resultado .tu { color: var(--ambar); text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 0.15em; }
+
+/* Múltiplos */
+.multiples { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 16px; max-width: 760px; }
+@media (min-width: 700px) { .multiples { grid-template-columns: repeat(3, 1fr); } }
+
+/* Cifra */
+.cifra-grande {
+  font-family: var(--display); font-variation-settings: "wdth" 80;
+  font-weight: 800; font-size: clamp(3rem, 13vw, 6.5rem); line-height: 1; color: var(--morado);
+  margin: 2.5rem 0 0.2rem; font-variant-numeric: tabular-nums;
+}
+
+/* Pasos (secuencia real: numerados) */
+.pasos { list-style: none; counter-reset: paso; padding: 0; margin: 1.5rem 0 0; }
+.pasos li {
+  counter-increment: paso; position: relative; padding: 0 0 1.6rem 3.4rem;
+}
+.pasos li::before {
+  content: counter(paso);
+  position: absolute; left: 0; top: -0.15em;
+  font: 800 2.2rem/1 var(--display); color: var(--morado);
+}
+.pasos label { font-size: 1.15rem; cursor: pointer; }
+.pasos input { width: 1.15em; height: 1.15em; accent-color: var(--morado); vertical-align: -0.15em; margin-right: 0.3em; }
+.pasos li:has(input:checked) strong { text-decoration: line-through; text-decoration-color: var(--ambar); text-decoration-thickness: 3px; }
+.pasos p { margin: 0.35rem 0 0; }
+
+/* Tarjeta */
+.tarjeta-acciones { display: flex; gap: 12px; flex-wrap: wrap; margin: 1.25rem 0; }
+.vista-tarjeta { width: min(100%, 320px); height: auto; border-radius: 14px; display: block; }
+
+/* Cierre y precisión */
+.cierre h2 { font-size: clamp(2rem, 7vw, 3.4rem); }
+.bajada-cierre { font-family: var(--display); font-size: clamp(1.4rem, 4.5vw, 2rem); font-weight: 500; color: var(--morado); }
+.detalle { border-top: 1px solid var(--lila); padding: 0.9rem 0; }
+.detalle summary { cursor: pointer; font-weight: 700; }
+.detalle p { margin: 0.6rem 0 0; }
+.precision { padding-bottom: 3rem; }
+
+.pie {
+  max-width: 1100px; margin: 0 auto; padding: 2rem var(--gutter) 3rem;
+  color: var(--tinta-suave); font-size: 0.9rem; border-top: 1px solid var(--lila);
+}
+.pie p { max-width: 50em; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
