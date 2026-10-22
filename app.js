@@ -90,8 +90,8 @@ function iniciarApuesta() {
     botones.forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
     const eligio18 = b.dataset.edad === "18";
     document.getElementById("reaccion").textContent = eligio18
-      ? "Bien. Poca gente le atina: casi todo mundo apuesta por 25."
-      : "Casi todo mundo piensa lo mismo. Y es al revés.";
+      ? "Le atinaste. Y por bastante:"
+      : "Nope. Es al revés, y por casi 15 puntos:";
     const caja = document.getElementById("revelacion");
     caja.hidden = false;
     registrar("#g-barras", graficaBarras);
@@ -168,15 +168,15 @@ function iniciarEdad() {
     }
     if (edad < 18) {
       salida.textContent = edad === 17
-        ? "Si cumples 18 antes del 6 de junio de 2027, ya puedes tramitar tu credencial: tienes hasta el 25 de enero de 2027. A los 18 se vota más que en cualquier momento de los veintes."
-        : "Todavía no votas. Cuando cumplas 18, tramita tu credencial: a esa edad se vota más que en cualquier momento de los veintes.";
+        ? "Si cumples 18 antes del 6 de junio de 2027, ya puedes sacar tu credencial. Tienes hasta el 25 de enero de 2027."
+        : "Todavía no te toca. Cuando cumplas 18, saca tu credencial: a esa edad es cuando más se vota en toda la juventud.";
       registrar("#g-tu", () => graficaCurva("#g-tu", serieActual()));
       return;
     }
     const v = serieActual()[idx(edad)];
     const enHoyo = edad >= 20 && edad <= 29;
     salida.innerHTML = `A los <span class="tu">${edad >= 90 ? "90 años o más" : `${edad} años`}</span> votó el ${fmt1(v)} % ${lugar} en 2024.` +
-      (enHoyo ? " Estás en el hoyo." : edad < 20 ? " Estás justo antes del hoyo." : "");
+      (enHoyo ? " Estás en pleno hoyo." : edad < 20 ? " Estás justo antes del hoyo." : edad < 44 ? " Vas saliendo del hoyo." : "");
     registrar("#g-tu", () => graficaCurva("#g-tu", serieActual(), { edad }));
   });
   registrar("#g-tu", () => graficaCurva("#g-tu", P24));
@@ -363,12 +363,14 @@ function fraseOrgullo(edad) {
 
 function textoPost(edad, conQuien) {
   const inicio = edad < 18
-    ? "Voy a estrenar mi credencial: mi primer voto es el 6 de junio de 2027. 🗳️"
-    : edad <= 29
-      ? "A los 18 votamos más que en cualquier otro momento de los veintes; después muchas y muchos se pierden en el hoyo. Yo no: voto el 6 de junio de 2027. 🗳️"
-      : "Yo voto el 6 de junio de 2027. 🗳️";
+    ? "Voy a estrenar credencial. Mi primer voto es el 6 de junio de 2027. 🗳️"
+    : edad < 20
+      ? "Mi primer voto no va a ser el último. El 6 de junio de 2027 voto. 🗳️"
+      : edad <= 29
+        ? "A los 18 vota más del 60 % y a los 25, menos de la mitad. Yo no me quedo en ese hoyo: el 6 de junio de 2027 voto. 🗳️"
+        : "El 6 de junio de 2027 voto. 🗳️";
   const con = conQuien ? ` Voy con ${conQuien}.` : "";
-  return `${inicio}${con} ¿Vienes? Mira dónde estás tú en la curva: https://${SITIO} #ElHoyo #YoVoto2027`;
+  return `${inicio}${con} ¿Quién más? Checa en qué parte de la curva vas: https://${SITIO} #ElHoyo #YoVoto2027`;
 }
 
 /* Escribe texto con salto de línea automático; devuelve la y siguiente. */
@@ -525,8 +527,8 @@ function crearTarjeta(ev) {
         document.getElementById("compartir-tarjeta").hidden = !puede;
         document.getElementById("compartir").hidden = false;
         aviso.textContent = puede
-          ? "Lista. Compártela directo en tus redes o descárgala."
-          : "Lista. Descárgala y súbela a tus redes con el texto de abajo.";
+          ? "Lista. Ya la puedes compartir."
+          : "Lista. Descárgala y súbela con el texto de abajo.";
       }, "image/png");
       holder.remove();
     },
@@ -547,7 +549,7 @@ async function copiarTexto() {
   const aviso = document.getElementById("aviso-tarjeta");
   try {
     await navigator.clipboard.writeText(ultimaTarjeta ? ultimaTarjeta.texto : "");
-    aviso.textContent = "Texto copiado. Pégalo en tu publicación.";
+    aviso.textContent = "Copiado. Pégalo en tu post.";
   } catch (e) {
     aviso.textContent = "No se pudo copiar. Selecciona el texto de abajo y cópialo.";
   }

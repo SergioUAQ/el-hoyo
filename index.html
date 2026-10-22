@@ -19,7 +19,7 @@
     <div class="heroe-texto">
       <h1 class="titulo">El h<span class="hundida">o</span>yo</h1>
       <p class="bajada">Votaste a los 18. ¿Y después?</p>
-      <p class="nota-arte">Cada punto es una parte de la lista nominal de 2024. Se queda arriba si esa edad votó; si no, cae al fondo. Mira la pila de abajo: los veintes son los que más se escapan.</p>
+      <p class="nota-arte">Cada punto es un pedacito de la lista nominal de 2024. Si esa edad votó, el punto se queda arriba; si no, cae. La pila más alta de abajo está en los veintes.</p>
     </div>
   </header>
 
@@ -43,7 +43,7 @@
     <!-- 2. El hoyo -->
     <section class="seccion">
       <h2>Entre los 19 y los 30 hay un hoyo</h2>
-      <p>A los 18, la primera vez, se vota con ganas. Después la participación cae y tarda más de diez años en recuperarse. Donde más se vota es a los 65.</p>
+      <p>A los 18 vota el 61.5 %. A los 25, el 46.9 %. De ahí la participación sube despacio y no vuelve a lo de los 18 sino hasta los 44 años. Quienes más votan tienen 65.</p>
       <figure>
         <div id="g-curva" class="grafica"></div>
         <figcaption>Participación por edad, 2024. Votaron ÷ (votaron + no votaron). Fuente: INE, Conteos Censales.</figcaption>
@@ -58,7 +58,7 @@
         <input id="edad" name="edad" type="number" inputmode="numeric" min="15" max="100" required>
         <label for="estado">Tu estado <span class="opcional">(opcional)</span></label>
         <select id="estado" name="estado"><option value="">Todo México</option></select>
-        <button type="submit">Ver mi edad</button>
+        <button type="submit">Ubicarme en la curva</button>
       </form>
       <p id="resultado-edad" class="resultado" aria-live="polite"></p>
       <figure>
@@ -70,7 +70,7 @@
     <!-- 4. No es casualidad -->
     <section class="seccion">
       <h2>Pasa en las seis elecciones desde 2009</h2>
-      <p>Hay años con más participación y años con menos, pero la forma se repite: el primer voto arriba y el hoyo después.</p>
+      <p>En 2012 y 2018 votó más gente y en las intermedias bastante menos. En las seis curvas, los 18 quedan arriba de los 25.</p>
       <figure>
         <div id="g-multiples" class="multiples"></div>
         <figcaption>Participación por edad en cada elección federal. Misma escala en todos los paneles. Fuente: INE, Conteos Censales 2009–2024.</figcaption>
@@ -80,7 +80,7 @@
     <!-- 5. El misterio -->
     <section class="seccion">
       <h2>12.4 millones de jóvenes no votaron en 2024</h2>
-      <p>Son personas de 18 a 29 años que estaban en la lista nominal. ¿Flojera? ¿Filas de horas bajo el sol? Vamos por partes.</p>
+      <p>Tenían entre 18 y 29 años y estaban en la lista nominal, o sea que tenían credencial. Siempre sale la misma explicación: que da flojera, que la fila está eterna. Lo de la fila sí se puede medir.</p>
       <figure>
         <div id="g-puntos" class="grafica"></div>
         <figcaption>Cada círculo representa a 100 mil jóvenes que no votaron en 2024. Fuente: INE, Conteos Censales.</figcaption>
@@ -89,48 +89,48 @@
 
     <!-- 6. El mito de la fila -->
     <section class="seccion">
-      <h2>La fila es más corta de lo que crees</h2>
-      <p>En 2024, cada casilla recibió en promedio a unas 330 personas durante sus 10 horas de apertura: alrededor de una cada dos minutos. Hay horas pico, claro. Las esperas largas se concentran en las <strong>casillas especiales</strong>, que tienen un número limitado de boletas.</p>
+      <h2>Una persona cada dos minutos</h2>
+      <p>En 2024, a cada casilla llegaron en promedio unas 330 personas en las 10 horas que estuvo abierta. Sí hay horas pico. Las filas largas de verdad se hacen en las <strong>casillas especiales</strong>, porque tienen boletas contadas.</p>
       <figure>
         <div id="g-casilla" class="grafica"></div>
         <figcaption>Cada marca es una persona que llega a votar, repartidas de forma pareja en una hora promedio (330 votantes ÷ 10 horas). Estimación propia: casillas por sección = lista nominal ÷ 750. Fuente: INE, Conteos Censales 2024.</figcaption>
       </figure>
       <details class="detalle">
         <summary>¿Qué es una casilla especial?</summary>
-        <p>Es una casilla para quienes están lejos de su sección el día de la elección. Ahí se puede votar con la credencial de otro lugar, pero solo por algunos cargos y hasta que se acaban las boletas: en elecciones recientes, entre 750 y 1,000 por casilla.</p>
+        <p>Es para quien el día de la elección anda lejos de su sección. Ahí puedes votar con una credencial de otro lado, pero solo por algunos cargos y mientras haya boletas. En elecciones recientes les llegaron entre 750 y 1,000.</p>
       </details>
     </section>
 
     <!-- 7. La pista -->
     <section class="seccion">
-      <h2>La vida se mueve; la credencial, no</h2>
-      <p>A los 18 vives con tu familia y tu credencial dice dónde vives. A los 21 te mudas a estudiar. A los 24 empiezas a trabajar en otra ciudad. Tu credencial sigue con el domicilio de antes, tu casilla queda lejos y en la especial no siempre alcanza la boleta.</p>
+      <h2>Te mudas y tu credencial se queda</h2>
+      <p>A los 18 muchas y muchos todavía viven con su familia, y la credencial trae esa dirección. A los 21 te vas a estudiar a otra ciudad; a los 24 encuentras chamba en otra. La credencial sigue con la dirección de tu casa, tu casilla te queda a horas y en la especial a veces ya no alcanzas boleta.</p>
       <figure>
         <div id="g-vida" class="grafica"></div>
       </figure>
-      <p>Cuando se les preguntó a jóvenes por qué no votaron, más de la mitad dio razones de logística, no de desinterés.</p>
+      <p>En 2018, el IEEM le preguntó a jóvenes del Estado de México por qué no habían votado. La respuesta más común fue que no tenían credencial (34 %). Si se suma a quienes no supieron la fecha o no sabían dónde votar, son más de la mitad.</p>
       <figure>
         <div id="g-razones" class="grafica"></div>
-        <figcaption>Razón más importante para no votar, jóvenes de 18 a 29 años que no votaron (940 casos). Fuente: IEEM, Encuesta ciudadana para jóvenes, Estado de México, 2018. No es una muestra aleatoria: tómala como pista, no como prueba.</figcaption>
+        <figcaption>Razón más importante para no votar, jóvenes de 18 a 29 años que no votaron (940 casos). Fuente: IEEM, Encuesta ciudadana para jóvenes, Estado de México, 2018. La muestra no fue aleatoria, así que hay que tomarla con cuidado.</figcaption>
       </figure>
     </section>
 
     <!-- 8. El giro -->
     <section class="seccion">
-      <h2>Somos más, pero deciden otras personas</h2>
-      <p>En la lista nominal hay más jóvenes que personas de 60 años o más. Aun así, ellas y ellos emitieron más votos.</p>
+      <h2>Somos más y votamos menos</h2>
+      <p>En la lista nominal hay 26 millones de jóvenes y 18.7 millones de personas de 60 o más. En 2024, ellas y ellos sumaron 12.5 millones de votos; las y los jóvenes, 11.9.</p>
       <figure>
         <div id="g-bloques" class="grafica"></div>
         <figcaption>Elección de 2024. Fuente: INE, Conteos Censales.</figcaption>
       </figure>
       <p class="cifra-grande"><span id="contador">0</span></p>
-      <p>votos más habría si las y los jóvenes votaran como lo hicieron a los 18.</p>
+      <p>votos más, si las y los jóvenes votáramos como a los 18.</p>
     </section>
 
     <!-- 9. La brecha -->
     <section class="seccion">
       <h2>Ellas sí. ¿Y ellos?</h2>
-      <p>En el hoyo, las mujeres votan mucho más que los hombres. A los 25 a 29 años votó el 54 % de las mujeres y el 41 % de los hombres. En Querétaro, 57 % y 42 %.</p>
+      <p>A los 25 a 29 años votó el 54 % de las mujeres y el 41 % de los hombres. En Querétaro la diferencia es todavía mayor: 57 % y 42 %. Después de los 70 se voltea y votan más los hombres.</p>
       <figure>
         <div id="g-sexo" class="grafica"></div>
         <figcaption>Participación por edad y sexo, 2024. Fuente: INE, Conteos Censales.</figcaption>
@@ -143,7 +143,7 @@
       <ol class="pasos">
         <li>
           <label><input type="checkbox"> <strong>¿Te mudaste? Actualiza tu credencial.</strong></label>
-          <p>La próxima elección es el 6 de junio de 2027 y el INE cierra el registro el <strong>25 de enero de 2027</strong>. Si te mudaste, cambia tu domicilio en un módulo del INE antes de esa fecha; el trámite es gratuito y se agenda con cita. <a href="https://www.ine.mx/credencial/">Cómo tramitar o actualizar tu credencial</a></p>
+          <p>La elección es el 6 de junio de 2027 y el INE cierra el registro el <strong>25 de enero de 2027</strong>. Si cambiaste de casa, saca cita en un módulo y actualiza tu domicilio antes de esa fecha. Es gratis. <a href="https://www.ine.mx/credencial/">Cómo tramitar o actualizar tu credencial</a></p>
         </li>
         <li>
           <label><input type="checkbox"> <strong>Busca tu casilla.</strong></label>
@@ -151,7 +151,7 @@
         </li>
         <li>
           <label><input type="checkbox"> <strong>Ve con alguien.</strong></label>
-          <p>Tu hermana, tu roomie, tu compa del trabajo. Es más fácil llegar cuando alguien te espera.</p>
+          <p>Tu roomie o tu compita del trabajo. Si quedas con alguien, es más difícil rajarse.</p>
         </li>
       </ol>
     </section>
@@ -159,7 +159,7 @@
     <!-- 11. Comparte -->
     <section class="seccion" id="tarjeta">
       <h2>Yo voto el 6 de junio de 2027</h2>
-      <p>Haz tu tarjeta y compártela. Votar se contagia: cuando tus amistades ven que vas, es más fácil que vayan. En tu tarjeta, desde tu edad sale una luz que sube más alto que cualquier punto de la curva.</p>
+      <p>En 2010, Facebook le mostró a 61 millones de personas en Estados Unidos cuáles de sus amistades ya habían votado. Eso sumó unos 340 mil votos (Bond y colegas, <i>Nature</i>, 2012). Haz tu tarjeta y súbela: desde tu edad sale una luz que termina más arriba que el pico de los 65.</p>
       <form id="form-tarjeta" class="form-edad">
         <label for="edad-tarjeta">Tu edad</label>
         <input id="edad-tarjeta" type="number" inputmode="numeric" min="17" max="100" required>
