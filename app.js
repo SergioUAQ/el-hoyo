@@ -157,6 +157,8 @@ function iniciarEdad() {
     ev.preventDefault();
     const edad = parseInt(document.getElementById("edad").value, 10);
     estado.edad = edad;
+    const edadTarjeta = document.getElementById("edad-tarjeta");
+    if (!edadTarjeta.value && edad >= 17 && edad <= 100) edadTarjeta.value = edad;
     estado.entidad = sel.value;
     const salida = document.getElementById("resultado-edad");
     const lugar = estado.entidad ? `en ${estado.entidad}` : "en México";
@@ -350,56 +352,157 @@ function graficaSexo() {
 
 /* ---------- 11. Tarjeta personal ---------- */
 
-function textoTarjeta(edad) {
-  if (edad < 18) return "Mi primer voto no será el último.";
+const SITIO = "sergiouaq.github.io/el-hoyo";
+
+function fraseOrgullo(edad) {
+  if (edad < 18) return "Voy a estrenar mi credencial.";
   if (edad < 20) return "Mi primer voto no será el último.";
-  if (edad <= 29) return "Yo no caí en el hoyo.";
+  if (edad <= 29) return "Yo salgo del hoyo.";
   return "Yo sigo votando.";
 }
 
-function crearTarjeta() {
+function textoPost(edad, conQuien) {
+  const inicio = edad < 18
+    ? "Voy a estrenar mi credencial: mi primer voto es el 6 de junio de 2027. 🗳️"
+    : edad <= 29
+      ? "A los 18 votamos más que en cualquier otro momento de los veintes; después muchas y muchos se pierden en el hoyo. Yo no: voto el 6 de junio de 2027. 🗳️"
+      : "Yo voto el 6 de junio de 2027. 🗳️";
+  const con = conQuien ? ` Voy con ${conQuien}.` : "";
+  return `${inicio}${con} ¿Vienes? Mira dónde estás tú en la curva: https://${SITIO} #ElHoyo #YoVoto2027`;
+}
+
+/* Escribe texto con salto de línea automático; devuelve la y siguiente. */
+function escribir(ctx, texto, x, y, ancho, alto) {
+  const palabras = texto.split(" ");
+  let linea = "";
+  palabras.forEach((p) => {
+    const prueba = linea ? `${linea} ${p}` : p;
+    if (ctx.measureText(prueba).width > ancho && linea) {
+      ctx.fillText(linea, x, y); y += alto; linea = p;
+    } else linea = prueba;
+  });
+  if (linea) { ctx.fillText(linea, x, y); y += alto; }
+  return y;
+}
+
+let ultimaTarjeta = null;  // { blob, texto }
+
+function crearTarjeta(ev) {
+  ev.preventDefault();
   const aviso = document.getElementById("aviso-tarjeta");
-  if (estado.edad == null || !(estado.edad >= 15 && estado.edad <= 100)) {
-    aviso.innerHTML = 'Primero escribe tu edad en <a href="#tu-edad">¿Dónde estás tú?</a>';
+  const edad = parseInt(document.getElementById("edad-tarjeta").value, 10);
+  if (!(edad >= 17 && edad <= 100)) {
+    aviso.textContent = "Escribe una edad entre 17 y 100 años.";
     return;
   }
-  aviso.textContent = "Dibujando tu sedimento…";
-  const edad = estado.edad;
+  const conQuien = document.getElementById("con-quien").value.trim().slice(0, 24);
+  const historia = document.querySelector('input[name="formato"]:checked').value === "historia";
+  const W = 1080, H = historia ? 1920 : 1350;
+  const artH = historia ? 920 : 560;
+  aviso.textContent = "Dibujando tu tarjeta…";
   const serie = serieActual();
-  const resaltar = edad >= 18 ? Math.min(edad, 90) : null;
+  const resaltar = edad >= 18 ? Math.min(edad, 90) : 18;  // a los 17, su columna es la del primer voto
   const holder = document.createElement("div");
   holder.style.cssText = "position:absolute;left:-99999px;top:0";
   document.body.appendChild(holder);
+
   document.fonts.ready.then(() => sedimento({
-    contenedor: holder, ancho: 1080, alto: 1000, semilla: 1000 + edad, resaltar, animar: false,
-    densidad: 1, serie, total: 30000, tam: 3.2,
+    contenedor: holder, ancho: W, alto: artH, semilla: 1000 + edad, resaltar, animar: false,
+    densidad: 1, serie, total: historia ? 26000 : 20000, tam: 3.4,
+    quedaSiempre: true, sinPerdidas: true, sinGuia: true,
     alTerminar: (arte) => {
       const cv = document.getElementById("vista-tarjeta");
+      cv.width = W; cv.height = H;
       const ctx = cv.getContext("2d");
-      ctx.fillStyle = C.papel; ctx.fillRect(0, 0, 1080, 1920);
+      const X = 80, ancho = W - 2 * X;
+      ctx.fillStyle = C.papel; ctx.fillRect(0, 0, W, H);
+      ctx.textBaseline = "alphabetic";
+
+      // Encabezado: el compromiso.
+      let y = historia ? 210 : 150;
       ctx.fillStyle = C.tinta;
-      ctx.font = '800 150px "Bricolage Grotesque"';
-      ctx.fillText("El hoyo", 80, 230);
-      ctx.drawImage(arte, 0, 330);
-      ctx.font = '700 64px "Bricolage Grotesque"';
-      const lineas = [textoTarjeta(edad)];
-      if (edad >= 18) {
-        const lugar = estado.entidad || "México";
-        lineas.push(`A los ${edad >= 90 ? "90 años o más" : `${edad} años`} votó el ${fmt1(serie[idx(edad)])} %`, `en ${lugar} (2024).`);
+      ctx.font = `800 ${historia ? 150 : 118}px "Bricolage Grotesque"`;
+      ctx.fillText("Yo voto", X, y);
+      y += historia ? 120 : 96;
+      ctx.fillStyle = C.morado;
+      ctx.font = `700 ${historia ? 82 : 66}px "Bricolage Grotesque"`;
+      ctx.fillText("el 6 de junio de 2027", X, y);
+
+      // El sedimento con la columna propia en ámbar.
+      y += historia ? 50 : 30;
+      ctx.drawImage(arte, 0, y);
+      y += artH + (historia ? 30 : 10);
+      ctx.fillStyle = C.suave;
+      ctx.font = '400 30px "Atkinson Hyperlegible"';
+      ctx.fillText(edad >= 18 ? "Mi columna, en ámbar: yo sí llego." : "Mi columna, en ámbar: la del primer voto.", X, y);
+
+      // Orgullo personal y con quién.
+      y += historia ? 110 : 80;
+      ctx.fillStyle = C.tinta;
+      ctx.font = `700 ${historia ? 66 : 56}px "Bricolage Grotesque"`;
+      y = escribir(ctx, fraseOrgullo(edad), X, y, ancho, historia ? 76 : 64);
+      if (conQuien) {
+        ctx.font = `600 ${historia ? 52 : 44}px "Bricolage Grotesque"`;
+        ctx.fillStyle = C.tinta;
+        const t = `Voy con ${conQuien}.`;
+        ctx.fillText(t, X, y + 6);
+        ctx.fillStyle = C.ambar;
+        ctx.fillRect(X, y + 20, Math.min(ctx.measureText(t).width, ancho), 8);
+        y += historia ? 84 : 70;
       }
-      ctx.fillStyle = C.morado; ctx.fillText(lineas[0], 80, 1460);
-      ctx.fillStyle = C.tinta; ctx.font = '400 48px "Atkinson Hyperlegible"';
-      lineas.slice(1).forEach((l, i) => ctx.fillText(l, 80, 1550 + i * 64));
-      ctx.fillStyle = C.suave; ctx.font = '400 32px "Atkinson Hyperlegible"';
-      ctx.fillText("#ElHoyo   Datos: INE, Conteos Censales 2024", 80, 1820);
+
+      // Esperanza colectiva.
+      if (historia) {
+        y += 30;
+        ctx.fillStyle = C.morado;
+        ctx.font = '700 40px "Atkinson Hyperlegible"';
+        y = escribir(ctx, "Si votamos como a los 18, somos 3 millones de votos más.", X, y, ancho, 52);
+      }
+
+      ctx.fillStyle = C.suave;
+      ctx.font = '400 30px "Atkinson Hyperlegible"';
+      ctx.fillText(`#ElHoyo #YoVoto2027   ${SITIO}`, X, H - 70);
+
       cv.hidden = false;
-      const a = document.getElementById("descargar-tarjeta");
-      a.href = cv.toDataURL("image/png");
-      a.hidden = false;
-      aviso.textContent = "Listo. Tu tarjeta mide 1080 × 1920, el formato de historias.";
+      const texto = textoPost(edad, conQuien);
+      document.getElementById("texto-post").textContent = texto;
+      document.getElementById("texto-post").hidden = false;
+      cv.toBlob((blob) => {
+        ultimaTarjeta = { blob, texto };
+        const a = document.getElementById("descargar-tarjeta");
+        if (a.href.startsWith("blob:")) URL.revokeObjectURL(a.href);
+        a.href = URL.createObjectURL(blob);
+        const archivo = new File([blob], "yo-voto-2027.png", { type: "image/png" });
+        const puede = navigator.canShare && navigator.canShare({ files: [archivo] });
+        document.getElementById("compartir-tarjeta").hidden = !puede;
+        document.getElementById("compartir").hidden = false;
+        aviso.textContent = puede
+          ? "Lista. Compártela directo en tus redes o descárgala."
+          : "Lista. Descárgala y súbela a tus redes con el texto de abajo.";
+      }, "image/png");
       holder.remove();
     },
   }));
+}
+
+async function compartirTarjeta() {
+  if (!ultimaTarjeta) return;
+  const archivo = new File([ultimaTarjeta.blob], "yo-voto-2027.png", { type: "image/png" });
+  try {
+    await navigator.share({ files: [archivo], text: ultimaTarjeta.texto, title: "Yo voto el 6 de junio de 2027" });
+  } catch (e) {
+    if (e.name !== "AbortError") document.getElementById("aviso-tarjeta").textContent = "No se pudo abrir el menú para compartir. Descarga la imagen y súbela desde tu app.";
+  }
+}
+
+async function copiarTexto() {
+  const aviso = document.getElementById("aviso-tarjeta");
+  try {
+    await navigator.clipboard.writeText(ultimaTarjeta ? ultimaTarjeta.texto : "");
+    aviso.textContent = "Texto copiado. Pégalo en tu publicación.";
+  } catch (e) {
+    aviso.textContent = "No se pudo copiar. Selecciona el texto de abajo y cópialo.";
+  }
 }
 
 /* ---------- arranque ---------- */
@@ -419,7 +522,9 @@ function iniciar() {
   alVer("#g-bloques", () => registrar("#g-bloques", graficaBloques));
   alVer("#contador", animarContador);
   registrar("#g-sexo", graficaSexo);
-  document.getElementById("crear-tarjeta").addEventListener("click", crearTarjeta);
+  document.getElementById("form-tarjeta").addEventListener("submit", crearTarjeta);
+  document.getElementById("compartir-tarjeta").addEventListener("click", compartirTarjeta);
+  document.getElementById("copiar-texto").addEventListener("click", copiarTexto);
 
   let anchoPrevio = window.innerWidth, espera;
   window.addEventListener("resize", () => {

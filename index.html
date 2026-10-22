@@ -158,14 +158,28 @@
 
     <!-- 11. Comparte -->
     <section class="seccion" id="tarjeta">
-      <h2>Haz tu tarjeta</h2>
-      <p>Tu tarjeta usa tu edad como semilla: el sedimento se dibuja distinto para cada edad y tu columna aparece en ámbar.</p>
-      <div class="tarjeta-acciones">
-        <button type="button" id="crear-tarjeta">Crear mi tarjeta</button>
-        <a id="descargar-tarjeta" class="boton-sec" download="el-hoyo-tarjeta.png" hidden>Descargar mi tarjeta</a>
-      </div>
+      <h2>Yo voto el 6 de junio de 2027</h2>
+      <p>Haz tu tarjeta y compártela. Votar se contagia: cuando tus amistades ven que vas, es más fácil que vayan. En tu tarjeta, tu columna brilla en ámbar porque tú sí llegas.</p>
+      <form id="form-tarjeta" class="form-edad">
+        <label for="edad-tarjeta">Tu edad</label>
+        <input id="edad-tarjeta" type="number" inputmode="numeric" min="17" max="100" required>
+        <label for="con-quien">¿Con quién vas? <span class="opcional">(opcional)</span></label>
+        <input id="con-quien" type="text" maxlength="24" placeholder="mi hermana, mi roomie…" autocomplete="off">
+        <fieldset class="formato">
+          <legend>Formato</legend>
+          <label><input type="radio" name="formato" value="historia" checked> Historia (9:16)</label>
+          <label><input type="radio" name="formato" value="publicacion"> Publicación (4:5)</label>
+        </fieldset>
+        <button type="submit">Crear mi tarjeta</button>
+      </form>
       <p id="aviso-tarjeta" class="resultado" aria-live="polite"></p>
       <canvas id="vista-tarjeta" class="vista-tarjeta" width="1080" height="1920" hidden aria-label="Vista previa de tu tarjeta"></canvas>
+      <div id="compartir" class="tarjeta-acciones" hidden>
+        <button type="button" id="compartir-tarjeta" hidden>Compartir</button>
+        <a id="descargar-tarjeta" class="boton-sec" download="yo-voto-2027.png">Descargar imagen</a>
+        <button type="button" id="copiar-texto" class="boton-sec">Copiar texto para tu post</button>
+      </div>
+      <p id="texto-post" class="texto-post" hidden></p>
     </section>
 
     <!-- 12. Cierre -->

@@ -25,7 +25,7 @@ function sedimento(opciones) {
 
   return new p5((p) => {
     let deposito, activas = [], sembradas = 0, acumulado = [], colW, terminado = false, cuadro = 0;
-    let perdidas = [], escalaFondo = 1;
+    let perdidas = [], escalaFondo = 1, pilar = 0, escalaPilar = 0;
     const total = o.total || P.total;
     const tam = o.tam || Math.max(1.4, o.ancho / 520);
     const m = { izq: o.ancho * 0.02, der: o.ancho * 0.02, arr: o.alto * 0.06, aba: o.alto * 0.02 };
@@ -65,16 +65,24 @@ function sedimento(opciones) {
         const yObj = yEdad(a.i);
         if (!a.decidida && a.y >= yObj) {
           a.decidida = true;
-          a.queda = p.random(100) < part[a.i];
+          // En la tarjeta, la columna de la persona siempre se queda: es su compromiso, no un dato.
+          a.queda = (o.quedaSiempre && edades[a.i] === o.resaltar) || p.random(100) < part[a.i];
           if (a.queda) {
             deposito.noStroke();
             deposito.fill(colorDe(a.i, true));
-            deposito.circle(a.x, yObj + p.randomGaussian(0, P.grosor * o.alto), tam);
+            // La columna de la persona crece hacia arriba desde su punto en la curva: un pilar.
+            const esPilar = o.quedaSiempre && edades[a.i] === o.resaltar;
+            if (esPilar) {
+              deposito.circle(xEdad(a.i) + p.randomGaussian(0, colW * 0.55), yObj - pilar++ * escalaPilar, tam * 1.4);
+            } else {
+              deposito.circle(a.x, yObj + p.randomGaussian(0, P.grosor * o.alto), tam);
+            }
             activas.splice(k, 1);
             continue;
           }
         }
         // Lo que no se queda cae hasta el fondo y se acumula ahí: la pila del fondo es lo que se escapó.
+        if (o.sinPerdidas && a.decidida && !a.queda) { activas.splice(k, 1); continue; }
         const yFondo = o.alto - m.aba - perdidas[a.i] * escalaFondo;
         if (a.decidida && !a.queda && a.y >= yFondo) {
           perdidas[a.i]++;
@@ -91,7 +99,7 @@ function sedimento(opciones) {
       p.background(o.fondo);
       p.image(deposito, 0, 0);
       p.noStroke();
-      if (o.resaltar !== null) {
+      if (o.resaltar !== null && !o.sinGuia) {
         p.stroke(230, 159, 0, 160); p.strokeWeight(Math.max(1, tam * 0.6));
         const xr = xEdad(Math.min(o.resaltar, 90) - 18);
         p.line(xr, m.arr * 0.5, xr, o.alto - m.aba);
@@ -117,6 +125,11 @@ function sedimento(opciones) {
       const sumaLn = acumulado[acumulado.length - 1];
       const maxPerdidas = d3.max(ln.map((v, i) => (v / sumaLn) * total * (1 - part[i] / 100)));
       escalaFondo = (o.alto * 0.22) / maxPerdidas;
+      if (o.quedaSiempre && o.resaltar !== null) {
+        const i = o.resaltar - 18;
+        const esperadas = (ln[i] / sumaLn) * total;
+        escalaPilar = (yEdad(i) - m.arr * 0.6) / Math.max(1, esperadas * 0.9);
+      }
       deposito = p.createGraphics(o.ancho, o.alto);
       if (o.densidad !== undefined) deposito.pixelDensity(o.densidad);
       if (!o.animar) {

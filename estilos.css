@@ -157,7 +157,12 @@ button:hover, .boton-sec:hover { border-color: var(--morado); }
 
 /* Tarjeta */
 .tarjeta-acciones { display: flex; gap: 12px; flex-wrap: wrap; margin: 1.25rem 0; }
-.vista-tarjeta { width: min(100%, 320px); height: auto; border-radius: 14px; display: block; }
+.vista-tarjeta { width: min(100%, 320px); height: auto; border-radius: 14px; display: block; margin-top: 1rem; }
+.formato { grid-column: 1 / -1; border: 0; padding: 0; margin: 0.25rem 0; display: flex; gap: 18px; flex-wrap: wrap; }
+.formato legend { font-weight: 700; padding: 0; margin-bottom: 6px; }
+.formato label { font-weight: 400; cursor: pointer; }
+.formato input { accent-color: var(--morado); }
+.texto-post { max-width: var(--medida); color: var(--tinta-suave); font-size: 0.95rem; border-left: 3px solid var(--ambar); padding-left: 12px; }
 
 /* Cierre y precisión */
 .cierre h2 { font-size: clamp(2rem, 7vw, 3.4rem); }
