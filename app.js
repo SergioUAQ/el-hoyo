@@ -90,8 +90,8 @@ function iniciarApuesta() {
     botones.forEach((o) => o.setAttribute("aria-pressed", String(o === b)));
     const eligio18 = b.dataset.edad === "18";
     document.getElementById("reaccion").textContent = eligio18
-      ? "Le atinaste. Y por bastante:"
-      : "Nope. Es al revés, y por casi 15 puntos:";
+      ? "Le atinaste y por bastante."
+      : "Nope. Es al revés y por casi 15 puntos.";
     const caja = document.getElementById("revelacion");
     caja.hidden = false;
     registrar("#g-barras", graficaBarras);
@@ -106,7 +106,7 @@ function graficaCurva(sel, serie, opciones = {}) {
   const tu = opciones.edad != null ? idx(opciones.edad) : null;
   const pico = d3.maxIndex(serie);
   const svg = lienzo(sel, A, H, opciones.etiqueta ||
-    `Curva de participación por edad en 2024: ${fmt1(serie[0])} % a los 18, mínimo de ${fmt1(d3.min(serie.slice(0, 13)))} % en los veintes y máximo de ${fmt1(serie[pico])} % a los ${EDADES[pico]}.`);
+    `Curva de participación por edad en 2024 con ${fmt1(serie[0])} % a los 18, mínimo de ${fmt1(d3.min(serie.slice(0, 13)))} % en los veintes y máximo de ${fmt1(serie[pico])} % a los ${EDADES[pico]}.`);
   const g = svg.append("g").attr("transform", `translate(${m.izq},${m.arr})`);
   const x = d3.scaleLinear([18, 90], [0, A - m.izq - m.der]);
   const y = d3.scaleLinear([20, 85], [alto, 0]);
@@ -131,8 +131,8 @@ function graficaCurva(sel, serie, opciones = {}) {
     g.append("text").attr("x", x(EDADES[i])).attr("y", y(serie[i]) + dy).attr("text-anchor", ancla)
       .attr("font-size", 14).text(texto);
   };
-  anot(0, `18 años: ${fmt1(serie[0])} %`, -12, "start");
-  anot(pico, `${EDADES[pico]} años: ${fmt1(serie[pico])} %`, -12);
+  anot(0, `${fmt1(serie[0])} % a los 18`, -12, "start");
+  anot(pico, `${fmt1(serie[pico])} % a los ${EDADES[pico]}`, -12);
 
   if (tu !== null) {
     g.append("circle").attr("cx", x(EDADES[tu])).attr("cy", y(serie[tu])).attr("r", 9)
@@ -140,7 +140,7 @@ function graficaCurva(sel, serie, opciones = {}) {
     const derecha = EDADES[tu] > 60;
     g.append("text").attr("x", x(EDADES[tu]) + (derecha ? -14 : 14)).attr("y", y(serie[tu]) + 28)
       .attr("text-anchor", derecha ? "end" : "start").attr("font-size", 15).attr("font-weight", 700)
-      .text(`tú: ${fmt1(serie[tu])} %`);
+      .text(`${fmt1(serie[tu])} % a tu edad`);
   }
 }
 
@@ -169,7 +169,7 @@ function iniciarEdad() {
     if (edad < 18) {
       salida.textContent = edad === 17
         ? "Si cumples 18 antes del 6 de junio de 2027, ya puedes sacar tu credencial. Tienes hasta el 25 de enero de 2027."
-        : "Todavía no te toca. Cuando cumplas 18, saca tu credencial: a esa edad es cuando más se vota en toda la juventud.";
+        : "Todavía no te toca. Cuando cumplas 18, saca tu credencial. A esa edad es cuando más se vota en toda la juventud.";
       registrar("#g-tu", () => graficaCurva("#g-tu", serieActual()));
       return;
     }
@@ -200,7 +200,7 @@ function graficaMultiples() {
     g.append("rect").attr("x", x(20)).attr("width", x(29.5) - x(20)).attr("height", alto).attr("fill", C.lila).attr("opacity", 0.22);
     g.append("text").attr("x", 0).attr("y", -24).attr("font-size", 17).attr("font-weight", 700).text(anio);
     g.append("text").attr("x", 0).attr("y", -7).attr("font-size", 12).attr("fill", C.suave)
-      .text(`18 años: ${Math.round(s[0])} %, 25 años: ${Math.round(s[7])} %`);
+      .text(`${Math.round(s[0])} % a los 18 y ${Math.round(s[7])} % a los 25`);
     g.append("g").attr("transform", `translate(0,${alto})`)
       .call(d3.axisBottom(x).tickValues([18, 50, 90]).tickSize(0).tickPadding(5).tickFormat((d) => (d === 90 ? "90+" : d)))
       .call((q) => q.select(".domain").attr("stroke", C.tinta).attr("stroke-width", 0.5))
@@ -216,7 +216,7 @@ function graficaMultiples() {
 function graficaPuntos() {
   const n = Math.round(DATOS.bloques.no_votaron_jovenes / 1e5);
   const A = anchoDe("#g-puntos"), cols = A < 500 ? 12 : 20, paso = A / cols, r = paso * 0.36, H = Math.ceil(n / cols) * paso + 4;
-  const svg = lienzo("#g-puntos", A, H, `${n} círculos: cada uno son 100 mil jóvenes que no votaron en 2024.`);
+  const svg = lienzo("#g-puntos", A, H, `${n} círculos. Cada uno son 100 mil jóvenes que no votaron en 2024.`);
   svg.selectAll("circle").data(d3.range(n)).join("circle")
     .attr("cx", (d) => (d % cols) * paso + paso / 2).attr("cy", (d) => Math.floor(d / cols) * paso + paso / 2)
     .attr("r", r).attr("fill", C.lila).attr("stroke", C.morado).attr("stroke-width", 1)
@@ -229,7 +229,7 @@ function graficaPuntos() {
 function graficaCasilla() {
   const A = anchoDe("#g-casilla"), H = 120, m = { izq: 14, der: 14 };
   const porHora = 33;
-  const svg = lienzo("#g-casilla", A, H, "En una hora, una casilla promedio recibe a unas 33 personas: una cada dos minutos.");
+  const svg = lienzo("#g-casilla", A, H, "En una hora una casilla promedio recibe a unas 33 personas, una cada dos minutos.");
   const x = d3.scaleLinear([0, 60], [m.izq, A - m.der]);
   svg.append("g").attr("transform", "translate(0,84)")
     .call(d3.axisBottom(x).tickValues([0, 15, 30, 45, 60]).tickSize(0).tickPadding(10).tickFormat((d) => `${d} min`))
@@ -241,7 +241,7 @@ function graficaCasilla() {
     .transition().duration(REDUCIR ? 0 : 250).delay((d) => (REDUCIR ? 0 : d * 90))
     .attr("y", 40).attr("height", 36);
   svg.append("text").attr("x", m.izq).attr("y", 24).attr("font-size", 14).attr("font-weight", 700)
-    .text("Una hora en una casilla promedio: 33 personas");
+    .text("33 personas en una hora en una casilla promedio");
 }
 
 /* ---------- 7. La línea de vida y las razones ---------- */
@@ -282,7 +282,7 @@ function graficaRazones() {
     ["Sentí inseguridad de salir a votar", 1.06, false],
   ];
   const A = anchoDe("#g-razones"), fila = 42, H = datos.length * fila + 40, izq = 0;
-  const svg = lienzo("#g-razones", A, H, "Razones para no votar: no tenía credencial 34 %, no se enteró de la fecha 14 %, no sabía dónde ni cómo 9 %. Las razones de logística suman 58 %.");
+  const svg = lienzo("#g-razones", A, H, "Razones para no votar. No tenía credencial 34 %, no se enteró de la fecha 14 %, no sabía dónde ni cómo 9 %. Las razones de logística suman 58 %.");
   const x = d3.scaleLinear([0, 40], [izq, A - 64]);
   const g = svg.selectAll("g").data(datos).join("g").attr("transform", (d, i) => `translate(0,${i * fila})`);
   g.append("text").attr("y", 14).attr("font-size", 14).attr("font-weight", (d) => (d[2] ? 700 : 400))
@@ -292,7 +292,7 @@ function graficaRazones() {
     .transition().duration(DUR).delay((d, i) => i * 80).attr("width", (d) => x(d[1]) - x(0));
   g.append("text").attr("x", (d) => x(d[1]) + 6).attr("y", 31).attr("font-size", 13).text((d) => `${fmt1(d[1])} %`);
   svg.append("text").attr("x", 0).attr("y", H - 6).attr("font-size", 14).attr("font-weight", 700).attr("fill", C.morado)
-    .text("En morado, razones de logística: 57.6 % en total");
+    .text("En morado las razones de logística, que suman 57.6 %");
 }
 
 /* ---------- 8. Bloques: jóvenes vs 60+ ---------- */
@@ -312,7 +312,7 @@ function graficaBloques() {
     g.append("text").attr("font-size", 16).attr("font-weight", 700).text(gr.titulo);
     gr.filas.forEach(([nombre, v, color], i) => {
       const yy = 22 + i * 62;
-      g.append("text").attr("x", 0).attr("y", yy + 14).attr("font-size", 14).text(`${nombre}: ${millones(v)} millones`);
+      g.append("text").attr("x", 0).attr("y", yy + 14).attr("font-size", 14).text(`${nombre}, ${millones(v)} millones`);
       g.append("rect").attr("x", x(0)).attr("y", yy + 22).attr("height", 22).attr("width", 0).attr("fill", color)
         .transition().duration(DUR).delay(k * 1200 + i * 200).attr("width", x(v) - x(0));
     });
@@ -334,7 +334,7 @@ function graficaSexo() {
   const A = anchoDe("#g-sexo"), H = Math.round(Math.max(280, Math.min(380, A * 0.62))), m = { izq: 44, der: 14, arr: 24, aba: 44 };
   const alto = H - m.arr - m.aba;
   const s = DATOS.sexo2024;
-  const svg = lienzo("#g-sexo", A, H, `Participación por sexo en 2024: a los 27 años votó el ${fmt1(s.mujeres[9])} % de las mujeres y el ${fmt1(s.hombres[9])} % de los hombres.`);
+  const svg = lienzo("#g-sexo", A, H, `Participación por sexo en 2024. A los 27 años votó el ${fmt1(s.mujeres[9])} % de las mujeres y el ${fmt1(s.hombres[9])} % de los hombres.`);
   const g = svg.append("g").attr("transform", `translate(${m.izq},${m.arr})`);
   const x = d3.scaleLinear([18, 90], [0, A - m.izq - m.der]);
   const y = d3.scaleLinear([20, 85], [alto, 0]);
@@ -367,10 +367,10 @@ function textoPost(edad, conQuien) {
     : edad < 20
       ? "Mi primer voto no va a ser el último. El 6 de junio de 2027 voto. 🗳️"
       : edad <= 29
-        ? "A los 18 vota más del 60 % y a los 25, menos de la mitad. Yo no me quedo en ese hoyo: el 6 de junio de 2027 voto. 🗳️"
+        ? "A los 18 vota más del 60 % y a los 25 menos de la mitad. Yo no me quedo en ese hoyo. El 6 de junio de 2027 voto. 🗳️"
         : "El 6 de junio de 2027 voto. 🗳️";
   const con = conQuien ? ` Voy con ${conQuien}.` : "";
-  return `${inicio}${con} ¿Quién más? Checa en qué parte de la curva vas: https://${SITIO} #ElHoyo #YoVoto2027`;
+  return `${inicio}${con} ¿Quién más? Checa en qué parte de la curva vas en https://${SITIO} #ElHoyo #YoVoto2027`;
 }
 
 /* Escribe texto con salto de línea automático; devuelve la y siguiente. */
